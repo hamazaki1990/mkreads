@@ -1,4 +1,3 @@
-from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 
@@ -8,16 +7,18 @@ def make_fragment(file, format, fraglength):
         i = 0
         while True:
             yield seq_record.seq[i:i+fraglength]
-            i += 1
+            i += 30
 
 
-fragment = make_fragment("test.fa", "fasta", 3)
+fragment = make_fragment("chr1.fa", "fasta", 100)
 
-with open("outputtest.fa", "w") as outfile:
+with open("fragment_chr1.fa", "w") as outfile:
     x = 0
     while True:
-        record = SeqRecord(next(fragment), id=str(x), description="fragment")
-        if len(record) < 2:
+        seq = next(fragment)
+        record = SeqRecord(seq, id=str(x), description="fragment")
+        if len(seq) < 80:
             break
-        SeqIO.write(record, outfile, "fasta")
+        elif float(seq.count("N")) < 20:
+            SeqIO.write(record, outfile, "fasta")
         x += 1

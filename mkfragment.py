@@ -17,7 +17,7 @@ print(chroms)
 for i in chroms:
     inputf = "chr"+i+".fa"
     outputf = "fragment_chr"+i+".fa"
-    fragment = make_fragment(inputf, "fasta", 3)
+    fragment = make_fragment(inputf, "fasta", 100)
 
     with open(outputf, "w") as outfile:
         x = 0
@@ -26,6 +26,6 @@ for i in chroms:
             record = SeqRecord(seq, id=str(x), description=inputf+"fragment")
             if len(seq) < 80:
                 break
-            elif float(seq.count("N")) < 20:
+            elif float(seq.count("N")) < 1:
                 SeqIO.write(record, outfile, "fasta")
             x += 1

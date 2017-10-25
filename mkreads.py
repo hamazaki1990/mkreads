@@ -33,16 +33,21 @@ outputf1 = "test2_1.fastq"
 outputf2 = "test2_2.fastq"
 x = 0
 while x < 10:
-    paired = next(read)
-    print(pairedreads)
-    rec1 = SeqRecord(paired[0], id="read_"+str(x), description=inputf+"_1")
-    rec2 = SeqRecord(paired[1], id=+"read_"+str(x), description=inputf+"_2")
-    rec1.letter_annotations["phred_quality"] = [40] * len(pairedreads[0])
-    rec2.letter_annotations["phred_quality"] = [40] * len(pairedreads[1])
+    pairedr = next(read)
+    print(pairedr)
+    rec1 = SeqRecord(pairedr[0], id="read_"+str(x), description=inputf+"_1")
+    rec2 = SeqRecord(pairedr[1], id="read_"+str(x), description=inputf+"_2")
+    rec1.letter_annotations["phred_quality"] = [40] * len(pairedr[0])
+    rec2.letter_annotations["phred_quality"] = [40] * len(pairedr[1])
     print([rec1, rec2])
-
-    with open(outputf1, "a") as outfile:
-        SeqIO.write(rec1, outfile, "fastq")
-    with open(outputf2, "a") as outfile:
-        SeqIO.write(rec2, outfile, "fastq")
+    if x == 0:
+            with open(outputf1, "w") as outfile:
+                SeqIO.write(rec1, outfile, "fastq")
+            with open(outputf2, "w") as outfile:
+                SeqIO.write(rec2, outfile, "fastq")
+    else:
+        with open(outputf1, "a") as outfile:
+            SeqIO.write(rec1, outfile, "fastq")
+        with open(outputf2, "a") as outfile:
+            SeqIO.write(rec2, outfile, "fastq")
     x += 1

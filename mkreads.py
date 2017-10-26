@@ -7,44 +7,43 @@ def make_reads(file, format, readlength):
     for seq_record in SeqIO.parse(file, format):
         reclength = len(seq_record)
         while True:
-            start1 = random.randint(0, reclength-1)
+            start1 = random.randrange(0, reclength)
             end1 = start1 + readlength
-            space = random.randrange(3, 5)
-            start2 = end1 + space
-            end2 = start2 + readlength
+            insert = random.randrange(100, 501, 20)
+            end2 = start1 + insert
+            start2 = end2 - readlength
+            pairedend = []
             if end1 > reclength:
                 seq1 = seq_record.seq[start1:]+seq_record.seq[:end1-reclength]
-                seq2 = seq_record.seq[start2-reclength:end2-reclength]
-            elif start2 > reclength:
-                seq1 = seq_record.seq[start1:end1]
-                seq2 = seq_record.seq[start2-reclength:end2-reclength]
-            elif end2 > reclength:
-                seq1 = seq_record.seq[start1:end1]
-                seq2 = seq_record.seq[start2:]+seq_record.seq[:end2-reclength]
             else:
                 seq1 = seq_record.seq[start1:end1]
+            pairedend.append(seq1)
+            if start2 > reclength:
+                seq2 = seq_record.seq[start2-reclength:end2-reclength]
+            elif end2 > reclength:
+                seq2 = seq_record.seq[start2:]+seq_record.seq[:end2-reclength]
+            else:
                 seq2 = seq_record.seq[start2:end2]
-            yield [seq1, seq2]
+            pairedend.append(seq2.reverse_complement())
+            yield pairedend
 
 
-inputf = "test2.fa"
-read = make_reads(inputf, "fasta", 5)
-outputf1 = "test2_1.fastq"
-outputf2 = "test2_2.fastq"
+inputf = "DXZ1.fa"
+read = make_reads(inputf, "fasta", 100)
+outputf1 = "DXZ1_artificial_shortread_1.fastq"
+outputf2 = "DXZ1_artificial_shortread_2.fastq"
 x = 0
-while x < 10:
+while x < 10000000:
     pairedr = next(read)
-    print(pairedr)
     rec1 = SeqRecord(pairedr[0], id="read_"+str(x), description=inputf+"_1")
     rec2 = SeqRecord(pairedr[1], id="read_"+str(x), description=inputf+"_2")
     rec1.letter_annotations["phred_quality"] = [40] * len(pairedr[0])
     rec2.letter_annotations["phred_quality"] = [40] * len(pairedr[1])
-    print([rec1, rec2])
     if x == 0:
-            with open(outputf1, "w") as outfile:
-                SeqIO.write(rec1, outfile, "fastq")
-            with open(outputf2, "w") as outfile:
-                SeqIO.write(rec2, outfile, "fastq")
+        with open(outputf1, "w") as outfile:
+            SeqIO.write(rec1, outfile, "fastq")
+        with open(outputf2, "w") as outfile:
+            SeqIO.write(rec2, outfile, "fastq")
     else:
         with open(outputf1, "a") as outfile:
             SeqIO.write(rec1, outfile, "fastq")

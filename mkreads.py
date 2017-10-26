@@ -33,7 +33,7 @@ read = make_reads(inputf, "fasta", 100)
 outputf1 = "DXZ1_artificial_shortread_1.fastq"
 outputf2 = "DXZ1_artificial_shortread_2.fastq"
 x = 0
-while x < 10000000:
+while x < 1000000:
     pairedr = next(read)
     rec1 = SeqRecord(pairedr[0], id="read_"+str(x), description=inputf+"_1")
     rec2 = SeqRecord(pairedr[1], id="read_"+str(x), description=inputf+"_2")

@@ -28,10 +28,10 @@ def make_reads(file, format, readlength):
             yield pairedend
 
 for i in range(1,10):
-    inputf = "D1Z5_peri_5end_2.fa"
+    inputf = "D1Z5_peri_5end_3.fa"
     read = make_reads(inputf, "fasta", 100)
-    outputf1 = "%s_D1Z5_peri2_artificial_shortread_1.fastq" %i
-    outputf2 = "%s_D1Z5_peri2_artificial_shortread_2.fastq" %i
+    outputf1 = "%s_D1Z5_peri3_artificial_shortread_1.fastq" %i
+    outputf2 = "%s_D1Z5_peri3_artificial_shortread_2.fastq" %i
     x = 0
     while x < 1000000:
         pairedr = next(read)

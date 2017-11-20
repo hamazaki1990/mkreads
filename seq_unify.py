@@ -5,7 +5,7 @@ from Bio import SeqIO
 def unify_pairedseq(file1, format1, file2, format2):
         rec_f = SeqIO.parse(file1, format1)
         rec_r = SeqIO.parse(file2, format2)
-        uniqueseq = []
+        uniqueseq = [[next(rec_f), next(rec_r)]]
         while True:
             try:
                 seq_f = next(rec_f)
@@ -13,27 +13,32 @@ def unify_pairedseq(file1, format1, file2, format2):
             except StopIteration:
                 break
             else:
-                for pair in uniqueseq:
-                    if pair[0] == seq_f.seq:
+                for i in uniqueseq:
+                    if str(i[0].seq) == str(seq_f.seq) and str(i[1].seq) == str(seq_r.seq):
                         break
-                    elif pair[1] == seq_r.seq:
-                        break
-                    else:
-                        uniqueseq.append([seq_f.seq, seq_r.seq])
+                else:
+                    uniqueseq.append([seq_f, seq_r])
         return uniqueseq
 
 
-inputf1 = "D11Z1artificial_DXZ1HOR_al_conc_1.fastq"
-inputf2 = "D11Z1artificial_DXZ1HOR_al_conc_2.fastq"
-outputf1 = "D11Z1artificial_DXZ1HOR_al_conc_1_unique.fasta"
-outputf2 = "D11Z1artificial_DXZ1HOR_al_conc_2_unique.fasta"
+inputfq1 = "test2_1.fastq"
+inputfq2 = "test2_2.fastq"
+inputfa1 = "test2_1.fa"
+inputfa2 = "test2_2.fa"
+outputf1 = "test2_1_unique.fa"
+outputf2 = "test2_2_unique.fa"
+print(next(SeqIO.parse(inputfq1, "fastq")))
 
-uniqueseq = unify_pairedseq(inputf1, "fastq", inputf2, "fastq")
+SeqIO.convert(inputfq1, "fastq", inputfa1, "fasta")
+SeqIO.convert(inputfq2, "fastq", inputfa2, "fasta")
 
-for i in uniqueseq:
-    seq1 = SeqRecord(uniqueseq[0], id=str(i), description=inputf1+"_1")
-    seq2 = SeqRecord(uniqueseq[1], id=str(i), description=inputf2+"_2")
-    with open(outputf1, "w") as outfile:
+uniqueseq = unify_pairedseq(inputfa1, "fasta", inputfa2, "fasta")
+
+with open(outputf1, "w") as outfile:
+    for i in uniqueseq:
+        seq1 = i[0]
         SeqIO.write(seq1, outfile, "fasta")
-    with open(outputf2, "w") as outfile:
+with open(outputf2, "w") as outfile:
+    for i in uniqueseq:
+        seq2 = i[1]
         SeqIO.write(seq2, outfile, "fasta")
